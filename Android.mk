@@ -1024,7 +1024,7 @@ $(sepolicy.recovery.conf): $(call build_policy, $(sepolicy_build_files), \
 	$(hide) sed '/^\s*dontaudit.*;/d' $@ | sed '/^\s*dontaudit/,/;/d' > $@.dontaudit
 
 ifeq ($(SELINUX_IGNORE_NEVERALLOWS),true)
-	$(hide) sed -z 's/\n\s*neverallow[^;]*;/\n/g' $@ > $@.neverallow
+	$(hide) awk '/^ *neverallow/ { na=1; } /;$$/ { eob=1; } { if (na==0) { print; } if (eob==1) { na=0; } eob=0; }' $@ > $@.neverallow
 	$(hide) mv $@.neverallow $@
 endif
 
